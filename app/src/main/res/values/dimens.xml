@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="default_margin">16dp</dimen>
+    <dimen name="small_margin">8dp</dimen>
+    <dimen name="image_size_detail_activity">180dp</dimen>
+    <dimen name="image_size_main_activity">240dp</dimen>
+    <dimen name="body_size">18sp</dimen>
+</resources>

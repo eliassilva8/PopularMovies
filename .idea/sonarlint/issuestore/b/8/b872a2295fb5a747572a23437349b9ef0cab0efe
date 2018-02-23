@@ -1,0 +1,8 @@
+
+Z"squid:SwitchLastCaseIsDefaultCheck""Add a default case to this switch.(¼œóÛüÿÿÿÿ8ÂÄéé›,
+dsquid:MaximumInheritanceDepth"=This class has 10 parents which is greater than 5 authorized.(¯É½Ä
+lsquid:S1301"KReplace this "switch" statement by "if" statements to increase readability.(ÚÍïıÿÿÿÿ8ÂÄéé›,
+lsquid:S1301"KReplace this "switch" statement by "if" statements to increase readability.(¼œóÛüÿÿÿÿ8ÂÄéé›,
+Dsquid:S3398"(Move this method into "NetworkReceiver".(ùÃÇà8Ôïé›,
+hsquid:S00112"FDefine and throw a dedicated exception instead of using a generic one.(¿òÈõüÿÿÿÿ8ÂÄéé›,
+osquid:S00116"YRename this field "mEmpty_view_tv" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¹‡æí
