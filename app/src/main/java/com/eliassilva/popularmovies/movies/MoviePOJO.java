@@ -1,4 +1,4 @@
-package com.eliassilva.popularmoviesstage1;
+package com.eliassilva.popularmovies.movies;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,13 +8,15 @@ import android.os.Parcelable;
  */
 
 public class MoviePOJO implements Parcelable {
+    private String mMovieId;
     private String mPosterPath;
     private String mTitle;
     private String mReleaseDate;
     private String mUserRating;
     private String mSynopsis;
 
-    public MoviePOJO(String poster, String title, String releaseDate, String userRating, String synopsis) {
+    public MoviePOJO(String movieId, String poster, String title, String releaseDate, String userRating, String synopsis) {
+        mMovieId = movieId;
         mPosterPath = poster;
         mTitle = title;
         mSynopsis = synopsis;
@@ -23,11 +25,17 @@ public class MoviePOJO implements Parcelable {
     }
 
     protected MoviePOJO(Parcel in) {
+        mMovieId = in.readString();
         mPosterPath = in.readString();
         mTitle = in.readString();
         mReleaseDate = in.readString();
         mUserRating = in.readString();
         mSynopsis = in.readString();
+
+    }
+
+    public String getMovieId() {
+        return mMovieId;
     }
 
     public String getPosterPath() {
@@ -57,6 +65,7 @@ public class MoviePOJO implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mMovieId);
         dest.writeString(mPosterPath);
         dest.writeString(mTitle);
         dest.writeString(mReleaseDate);

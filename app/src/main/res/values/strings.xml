@@ -1,13 +1,10 @@
 <resources>
-    <string name="app_name">PopularMoviesStage1</string>
+    <string name="app_name">PopularMovies</string>
     <string name="sort_by_spinner_label">Sort by:</string>
     <string name="no_connection">No internet connection</string>
     <string name="no_movies">No movies found</string>
     <string name="title_activity_detail">Details</string>
-    <string name="movie_title_label">Title:</string>
-    <string name="movie_release_date_label">Release:</string>
-    <string name="movie_user_rating_label">Rating:</string>
-    <string name="movie_synopsis_label">Synopsis:</string>
+    <string name="movie_synopsis_label">Synopsis</string>
     <string name="poster_path_key">poster_path</string>
     <string name="title_key">title</string>
     <string name="release_date_key">release_date</string>
@@ -15,6 +12,8 @@
     <string name="synopsis_key">synopsis</string>
     <string name="movie_user_rating_key">user_rating</string>
     <string name="movie_poster_description">Poster of a movie</string>
+    <string name="movie_trailers_label">Trailers</string>
+    <string name="no_trailers_string">Cannot find any trailer. Please check your internet connection.</string>
 
     <string-array name="sort_by_array">
         <item>Most popular</item>

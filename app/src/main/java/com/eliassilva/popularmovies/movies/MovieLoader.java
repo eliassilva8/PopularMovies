@@ -1,10 +1,9 @@
-package com.eliassilva.popularmoviesstage1;
+package com.eliassilva.popularmovies.movies;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 
-import com.eliassilva.popularmoviesstage1.customExceptions.FetchDataException;
-import com.eliassilva.popularmoviesstage1.utilities.NetworkUtils;
+import com.eliassilva.popularmovies.utilities.NetworkUtils;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
  * Created by Elias on 21/02/2018.
  */
 
-class MovieLoader extends AsyncTaskLoader<List<MoviePOJO>> {
+public class MovieLoader extends AsyncTaskLoader<List<MoviePOJO>> {
     private final String mSortBy;
 
     public MovieLoader(Context context, String sortBy) {
@@ -30,13 +29,6 @@ class MovieLoader extends AsyncTaskLoader<List<MoviePOJO>> {
         if (mSortBy == null) {
             return null;
         }
-        List<MoviePOJO> moviesList = null;
-        try {
-            moviesList = NetworkUtils.fetchMoviesData(mSortBy);
-
-        } catch (FetchDataException e) {
-            e.printStackTrace();
-        }
-        return moviesList;
+        return NetworkUtils.extractMoviesFromJson(mSortBy);
     }
 }

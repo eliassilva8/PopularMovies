@@ -9,129 +9,146 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/movie_poster_detail_iv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/small_margin"
-            android:layout_marginStart="@dimen/small_margin"
-            android:layout_marginTop="@dimen/small_margin"
-            android:gravity="center"
-            android:minHeight="@dimen/image_size_detail_activity"
-            android:paddingBottom="@dimen/default_margin"
-            android:paddingLeft="@dimen/small_margin"
-            android:paddingRight="@dimen/small_margin"
-            android:paddingTop="@dimen/default_margin"
-            android:contentDescription="@string/movie_poster_description"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/movie_title_label_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/default_margin"
-            android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/movie_title_label"
-            android:textColor="@color/black"
-            android:textSize="@dimen/body_size"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/movie_poster_detail_iv" />
-
         <TextView
             android:id="@+id/movie_title_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/default_margin"
-            android:layout_marginStart="@dimen/small_margin"
-            android:textSize="@dimen/body_size"
-            app:layout_constraintBottom_toBottomOf="@+id/movie_title_label_tv"
+            android:textSize="@dimen/title_size"
+            android:padding="@dimen/default_margin"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/movie_title_label_tv"
-            app:layout_constraintTop_toTopOf="@+id/movie_title_label_tv"
-            tools:text="Minions" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Pulp Fiction" />
 
-        <TextView
-            android:id="@+id/movie_release_date_label_tv"
+        <ImageView
+            android:id="@+id/movie_poster_detail_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/default_margin"
-            android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/movie_release_date_label"
-            android:textColor="@color/black"
-            android:textSize="@dimen/body_size"
+            android:contentDescription="@string/movie_poster_description"
+            android:minHeight="@dimen/image_size_detail_activity"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/movie_title_label_tv" />
+            app:layout_constraintTop_toBottomOf="@+id/movie_title_tv" />
 
         <TextView
             android:id="@+id/movie_release_date_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/small_margin"
-            android:layout_marginStart="@dimen/small_margin"
-            app:layout_constraintBottom_toBottomOf="@+id/movie_release_date_label_tv"
-            android:textSize="@dimen/body_size"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/movie_release_date_label_tv"
-            app:layout_constraintTop_toTopOf="@+id/movie_release_date_label_tv"
-            tools:text="Minions" />
-
-        <TextView
-            android:id="@+id/movie_user_rating_label_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
             android:layout_marginStart="@dimen/default_margin"
-            android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/movie_user_rating_label"
-            android:textColor="@color/black"
             android:textSize="@dimen/body_size"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/movie_release_date_label_tv" />
+            app:layout_constraintBottom_toTopOf="@+id/movie_user_rating_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/movie_poster_detail_iv"
+            app:layout_constraintTop_toTopOf="@+id/movie_poster_detail_iv"
+            app:layout_constraintVertical_bias="1.0"
+            tools:text="2018" />
 
         <TextView
             android:id="@+id/movie_user_rating_tv"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/default_margin"
-            android:layout_marginStart="@dimen/small_margin"
             android:textSize="@dimen/body_size"
-            app:layout_constraintBottom_toBottomOf="@+id/movie_user_rating_label_tv"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/movie_poster_detail_iv"
+            app:layout_constraintEnd_toEndOf="@+id/movie_release_date_tv"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/movie_user_rating_label_tv"
-            app:layout_constraintTop_toTopOf="@+id/movie_user_rating_label_tv"
-            tools:text="Minions" />
+            app:layout_constraintStart_toStartOf="@+id/movie_release_date_tv"
+            app:layout_constraintTop_toTopOf="@+id/movie_poster_detail_iv"
+            tools:text="8.0" />
+
+        <TextView
+            android:id="@+id/movie_total_time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:layout_marginTop="@dimen/default_margin"
+            android:textSize="@dimen/body_size"
+            app:layout_constraintBottom_toBottomOf="@+id/movie_poster_detail_iv"
+            app:layout_constraintEnd_toEndOf="@+id/movie_release_date_tv"
+            app:layout_constraintStart_toStartOf="@+id/movie_release_date_tv"
+            app:layout_constraintTop_toBottomOf="@+id/movie_user_rating_tv"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="120m" />
 
         <TextView
             android:id="@+id/movie_synopsis_label_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/default_margin"
-            android:layout_marginTop="@dimen/default_margin"
             android:text="@string/movie_synopsis_label"
             android:textColor="@color/black"
             android:textSize="@dimen/body_size"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/movie_user_rating_label_tv" />
+            app:layout_constraintTop_toBottomOf="@+id/movie_poster_detail_iv" />
 
         <TextView
             android:id="@+id/movie_synopsis_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            android:textSize="@dimen/body_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/movie_synopsis_label_tv"
+            app:layout_constraintTop_toBottomOf="@+id/movie_synopsis_label_tv"
+            tools:text="Minions" />
+
+        <ToggleButton
+            android:id="@+id/favoriteButton"
+            android:layout_width="66dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/default_margin"
             android:layout_marginEnd="@dimen/default_margin"
-            android:layout_marginStart="@dimen/small_margin"
+            android:layout_marginTop="@dimen/default_margin"
+            android:background="@drawable/ic_favorite"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:textOff=""
+            android:textOn=""
+            app:layout_constraintBottom_toBottomOf="@+id/movie_title_tv"
+            app:layout_constraintEnd_toEndOf="@+id/movie_title_tv"
+            app:layout_constraintTop_toTopOf="@+id/movie_title_tv" />
+
+        <TextView
+            android:id="@+id/movie_trailers_label_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:layout_marginTop="@dimen/default_margin"
+            android:text="@string/movie_trailers_label"
+            android:textColor="@color/black"
             android:textSize="@dimen/body_size"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/movie_synopsis_label_tv"
-            app:layout_constraintTop_toTopOf="@+id/movie_synopsis_label_tv"
-            app:layout_constraintVertical_bias="0.0"
-            tools:text="Minions" />
+            app:layout_constraintStart_toStartOf="@+id/movie_synopsis_tv"
+            app:layout_constraintTop_toBottomOf="@+id/movie_synopsis_tv" />
+
+        <TextView
+            android:id="@+id/empty_trailers_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/no_trailers_string"
+            android:textColor="@color/black"
+            android:textSize="@dimen/body_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/movie_trailers_label_tv" />
+
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/movies_trailers_rv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/movie_trailers_label_tv" />
+
+
     </android.support.constraint.ConstraintLayout>
 
 </ScrollView>

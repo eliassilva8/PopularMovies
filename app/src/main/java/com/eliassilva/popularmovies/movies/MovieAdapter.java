@@ -1,4 +1,4 @@
-package com.eliassilva.popularmoviesstage1;
+package com.eliassilva.popularmovies.movies;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.eliassilva.popularmovies.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import butterknife.ButterKnife;
  * Created by Elias on 17/02/2018.
  */
 
-class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String POSTER_SIZE = "w185/";
     private List<MoviePOJO> mMoviesList;

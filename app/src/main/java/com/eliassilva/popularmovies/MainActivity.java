@@ -1,4 +1,4 @@
-package com.eliassilva.popularmoviesstage1;
+package com.eliassilva.popularmovies;
 
 import android.app.Activity;
 import android.app.LoaderManager;
@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,20 +20,24 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.eliassilva.popularmovies.movies.MovieAdapter;
+import com.eliassilva.popularmovies.movies.MovieLoader;
+import com.eliassilva.popularmovies.movies.MoviePOJO;
+import com.eliassilva.popularmovies.utilities.NetworkReceiver;
+
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<MoviePOJO>>, MovieAdapter.MovieAdapterOnClickHandler {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<MoviePOJO>>, MovieAdapter.MovieAdapterOnClickHandler, NetworkReceiver.NetworkReceiverListener {
     private MovieAdapter mMovieAdapter;
     private static final String SORT_BY_POPULARITY = "popular";
     private static final String SORT_BY_HIGHEST_RATED = "top_rated";
     private String mSortBySelected = SORT_BY_POPULARITY;
     private static final int ID_MOVIE_LOADER = 100;
     private LoaderManager mLoaderManager;
-    private NetworkReceiver mReceiver = new NetworkReceiver();
-    private boolean mIsConnected;
+    private NetworkReceiver mReceiver;
 
     @BindView(R.id.movies_list_rv)
     RecyclerView mMoviesList;
@@ -55,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         mReceiver = new NetworkReceiver();
         this.registerReceiver(mReceiver, filter);
+        mReceiver.setNetworkReceiverListener(this);
+
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
         mMoviesList.setLayoutManager(layoutManager);
@@ -96,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (data == null) {
             mEmpty_view_tv.setText(R.string.no_movies);
         }
-
         mMovieAdapter.setMovieData(data);
     }
 
@@ -107,10 +113,26 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onClick(MoviePOJO movie) {
-        MoviePOJO dataToSend = new MoviePOJO(movie.getPosterPath(), movie.getTitle(), movie.getReleaseDate(), movie.getUserRating(), movie.getSynopsis());
+        MoviePOJO dataToSend = new MoviePOJO(movie.getMovieId(), movie.getPosterPath(), movie.getTitle(), movie.getReleaseDate(), movie.getUserRating(), movie.getSynopsis());
         Intent movieDetailIntent = new Intent(MainActivity.this, DetailActivity.class);
         movieDetailIntent.putExtra("movie_data", dataToSend);
         startActivity(movieDetailIntent);
+    }
+
+    @Override
+    public void onConnectionChange(boolean wasTrueFlag) {
+        if (wasTrueFlag) {
+            mEmpty_view_tv.setVisibility(View.GONE);
+            mLoaderManager.initLoader(ID_MOVIE_LOADER, null, MainActivity.this);
+            mSpinner.setOnItemSelectedListener(new SpinnerActivity());
+        } else {
+            mMoviesList.setVisibility(View.GONE);
+            mLoadingIndicator.setVisibility(View.GONE);
+            mSpinner.setVisibility(View.GONE);
+            mSortByLabel.setVisibility(View.GONE);
+            mEmpty_view_tv.setVisibility(View.VISIBLE);
+            mEmpty_view_tv.setText(R.string.no_connection);
+        }
     }
 
     class SpinnerActivity extends Activity implements AdapterView.OnItemSelectedListener {
@@ -130,37 +152,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
             mSortBySelected = SORT_BY_POPULARITY;
-        }
-    }
-
-    private void isConnected() {
-        ConnectivityManager conn = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        assert conn != null;
-        NetworkInfo networkInfo = conn.getActiveNetworkInfo();
-        if (networkInfo != null && (networkInfo.getType() == ConnectivityManager.TYPE_WIFI || networkInfo.getType() == ConnectivityManager.TYPE_MOBILE)) {
-            mLoaderManager.initLoader(ID_MOVIE_LOADER, null, MainActivity.this);
-            mSpinner.setOnItemSelectedListener(new SpinnerActivity());
-            mIsConnected = true;
-        } else {
-            mMoviesList.setVisibility(View.GONE);
-            mLoadingIndicator.setVisibility(View.GONE);
-            mSpinner.setVisibility(View.GONE);
-            mSortByLabel.setVisibility(View.GONE);
-            mEmpty_view_tv.setVisibility(View.VISIBLE);
-            mEmpty_view_tv.setText(R.string.no_connection);
-            mIsConnected = false;
-        }
-    }
-
-    public class NetworkReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (mIsConnected) {
-                mIsConnected = false;
-            } else {
-                isConnected();
-            }
         }
     }
 }
