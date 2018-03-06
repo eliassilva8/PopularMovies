@@ -13,8 +13,8 @@
             android:id="@+id/movie_title_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/title_size"
             android:padding="@dimen/default_margin"
+            android:textSize="@dimen/title_size"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -148,7 +148,42 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/movie_trailers_label_tv" />
 
+        <TextView
+            android:id="@+id/movie_reviews_label_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:layout_marginTop="@dimen/default_margin"
+            android:text="@string/movie_reviews_label"
+            android:textColor="@color/black"
+            android:textSize="@dimen/body_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/movie_synopsis_tv"
+            app:layout_constraintTop_toBottomOf="@+id/movies_trailers_rv" />
 
+        <TextView
+            android:id="@+id/empty_reviews_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/no_reviews_string"
+            android:textColor="@color/black"
+            android:textSize="@dimen/body_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/movie_reviews_label_tv" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/movies_reviews_rv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/movie_reviews_label_tv" />
     </android.support.constraint.ConstraintLayout>
 
 </ScrollView>

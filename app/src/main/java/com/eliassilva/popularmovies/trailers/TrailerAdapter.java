@@ -27,11 +27,11 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
     final private TrailerAdapterOnClickHandler mClickHandler;
 
     public TrailerAdapter(TrailerAdapterOnClickHandler clickHandler) {
-        mClickHandler = clickHandler;
+        this.mClickHandler = clickHandler;
     }
 
     public interface TrailerAdapterOnClickHandler {
-        void onClick(String key);
+        void playTrailer(String key);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
         public void onClick(View v) {
             TrailerPOJO trailerClicked = mTrailersList.get(getAdapterPosition());
             String key = trailerClicked.getTrailerKey();
-            mClickHandler.onClick(key);
+            mClickHandler.playTrailer(key);
         }
     }
 }

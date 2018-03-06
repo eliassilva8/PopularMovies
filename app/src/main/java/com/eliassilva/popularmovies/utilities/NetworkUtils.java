@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.eliassilva.popularmovies.BuildConfig;
 import com.eliassilva.popularmovies.movies.MoviePOJO;
+import com.eliassilva.popularmovies.reviews.ReviewPOJO;
 import com.eliassilva.popularmovies.trailers.TrailerPOJO;
 
 import org.json.JSONArray;
@@ -32,6 +33,7 @@ public class NetworkUtils {
     private static final String API_KEY = BuildConfig.API_KEY;
     private final static String API_KEY_PARAM = "api_key";
     private final static String TRAILER_PARAM = "/videos";
+    private final static String REVIEW_PARAM = "/reviews";
 
     /**
      * Build the URL to get the movies from the api
@@ -58,6 +60,23 @@ public class NetworkUtils {
     private static URL buildTrailersUrl(String movieId) {
         try {
             Uri builtUri = Uri.parse(BASE_URL + movieId + TRAILER_PARAM).buildUpon()
+                    .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                    .build();
+            return new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Cannot create url: " + e);
+        }
+    }
+
+    /**
+     * Build the URL to get the reviews from a determinate movie
+     *
+     * @param movieId from which we want to get the reviews
+     * @return URL to get the response
+     */
+    private static URL buildReviewsUrl(String movieId) {
+        try {
+            Uri builtUri = Uri.parse(BASE_URL + movieId + REVIEW_PARAM).buildUpon()
                     .appendQueryParameter(API_KEY_PARAM, API_KEY)
                     .build();
             return new URL(builtUri.toString());
@@ -153,5 +172,36 @@ public class NetworkUtils {
             e.printStackTrace();
         }
         return trailersList;
+    }
+
+    /**
+     * Converts the response into a JSON and extract the reviews data
+     *
+     * @param movieId from where the data will be extracted
+     * @return a list of reviews
+     */
+    public static List<ReviewPOJO> extractReviewsFromJson(String movieId) {
+        final String REVIEWS_RESULTS = "results";
+        final String REVIEW_AUTHOR = "author";
+        final String REVIEW_CONTENT = "content";
+        final String REVIEW_URL = "url";
+        List<ReviewPOJO> reviewsList = new ArrayList<>();
+
+        try {
+            URL url = buildReviewsUrl(movieId);
+            String response = getResponse(url);
+            JSONObject reviewsJson = new JSONObject(response);
+            JSONArray reviewsResults = reviewsJson.getJSONArray(REVIEWS_RESULTS);
+            for (int i = 0; i < reviewsResults.length(); i++) {
+                JSONObject singleReview = reviewsResults.getJSONObject(i);
+                String author = singleReview.optString(REVIEW_AUTHOR);
+                String content = singleReview.optString(REVIEW_CONTENT);
+                String reviewUrl = singleReview.optString(REVIEW_URL);
+                reviewsList.add(new ReviewPOJO(author, content, reviewUrl));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return reviewsList;
     }
 }

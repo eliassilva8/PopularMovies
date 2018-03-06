@@ -18,6 +18,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.eliassilva.popularmovies.movies.MoviePOJO;
+import com.eliassilva.popularmovies.reviews.ReviewAdapter;
+import com.eliassilva.popularmovies.reviews.ReviewLoader;
+import com.eliassilva.popularmovies.reviews.ReviewPOJO;
 import com.eliassilva.popularmovies.trailers.TrailerAdapter;
 import com.eliassilva.popularmovies.trailers.TrailerLoader;
 import com.eliassilva.popularmovies.trailers.TrailerPOJO;
@@ -36,14 +39,62 @@ import butterknife.ButterKnife;
 /**
  * Shows the details of the selected movie
  */
-public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<TrailerPOJO>>, TrailerAdapter.TrailerAdapterOnClickHandler, NetworkReceiver.NetworkReceiverListener {
+public class DetailActivity extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler, ReviewAdapter.ReviewAdapterOnClickHandler, NetworkReceiver.NetworkReceiverListener {
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String POSTER_SIZE = "w185/";
     private TrailerAdapter mTrailerAdapter;
+    private ReviewAdapter mReviewAdapter;
     private LoaderManager mLoader;
     private static final int ID_TRAILER_LOADER = 200;
+    private static final int ID_REVIEW_LOADER = 300;
     private String mMovieId;
     private NetworkReceiver mReceiver;
+    private static final String MOVIE_ID = "movie_id";
+    Bundle mBundle = new Bundle();
+
+    private LoaderManager.LoaderCallbacks<List<TrailerPOJO>> mTrailerLoader = new LoaderManager.LoaderCallbacks<List<TrailerPOJO>>() {
+        @Override
+        public Loader<List<TrailerPOJO>> onCreateLoader(int id, Bundle args) {
+            switch (id) {
+                case ID_TRAILER_LOADER:
+                    return new TrailerLoader(DetailActivity.this, args.getString(MOVIE_ID));
+                default:
+                    throw new RuntimeException("Loader Not Implemented: " + id);
+            }
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<TrailerPOJO>> loader, List<TrailerPOJO> data) {
+            mTrailerAdapter.setTrailerData(data);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<TrailerPOJO>> loader) {
+            mTrailerAdapter.setTrailerData(null);
+        }
+    };
+
+    private LoaderManager.LoaderCallbacks<List<ReviewPOJO>> mReviewLoader = new LoaderManager.LoaderCallbacks<List<ReviewPOJO>>() {
+        @Override
+        public Loader<List<ReviewPOJO>> onCreateLoader(int id, Bundle args) {
+            switch (id) {
+                case ID_REVIEW_LOADER:
+                    return new ReviewLoader(DetailActivity.this, args.getString(MOVIE_ID));
+                default:
+                    throw new RuntimeException("Loader Not Implemented: " + id);
+            }
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<ReviewPOJO>> loader, List<ReviewPOJO> data) {
+            mReviewAdapter.setReviewData(data);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<ReviewPOJO>> loader) {
+            mReviewAdapter.setReviewData(null);
+        }
+    };
 
     @BindView(R.id.movie_poster_detail_iv)
     ImageView mPosterPath;
@@ -59,6 +110,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     RecyclerView mTrailersList;
     @BindView(R.id.empty_trailers_tv)
     TextView mNoTrailers;
+    @BindView(R.id.movies_reviews_rv)
+    RecyclerView mReviewsList;
+    @BindView(R.id.empty_reviews_tv)
+    TextView mNoReviews;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,7 +122,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         ButterKnife.bind(this);
 
         MoviePOJO movieData = (MoviePOJO) getIntent().getParcelableExtra("movie_data");
-
         assert movieData != null;
         Picasso.with(this).load(POSTER_BASE_URL + POSTER_SIZE + movieData.getPosterPath()).into(mPosterPath);
         mTitle.setText(movieData.getTitle());
@@ -75,7 +129,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mUserRating.setText(movieData.getUserRating());
         mSynopsis.setText(movieData.getSynopsis());
         mMovieId = movieData.getMovieId();
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mSynopsis.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
         }
@@ -85,12 +138,20 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mReceiver = new NetworkReceiver();
         this.registerReceiver(mReceiver, filter);
         mReceiver.setNetworkReceiverListener(this);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mTrailersList.setLayoutManager(layoutManager);
+
+        LinearLayoutManager trailerLayoutManager = new LinearLayoutManager(this);
+        mTrailersList.setLayoutManager(trailerLayoutManager);
         mTrailersList.setHasFixedSize(true);
         mTrailerAdapter = new TrailerAdapter(this);
         mTrailersList.setAdapter(mTrailerAdapter);
 
+        LinearLayoutManager reviewLayoutManager = new LinearLayoutManager(this);
+        mReviewsList.setLayoutManager(reviewLayoutManager);
+        mReviewsList.setHasFixedSize(true);
+        mReviewAdapter = new ReviewAdapter(this);
+        mReviewsList.setAdapter(mReviewAdapter);
+
+        mBundle.putString(MOVIE_ID, mMovieId);
     }
 
     @Override
@@ -102,39 +163,24 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     @Override
-    public Loader<List<TrailerPOJO>> onCreateLoader(int id, Bundle args) {
-        switch (id) {
-            case ID_TRAILER_LOADER:
-                return new TrailerLoader(this, mMovieId);
-            default:
-                throw new RuntimeException("Loader Not Implemented: " + id);
-        }
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<TrailerPOJO>> loader, List<TrailerPOJO> data) {
-        mTrailerAdapter.setTrailerData(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<TrailerPOJO>> loader) {
-        mTrailerAdapter.setTrailerData(null);
-    }
-
-    @Override
     public void onConnectionChange(boolean wasTrueFlag) {
         if (wasTrueFlag) {
             mNoTrailers.setVisibility(View.GONE);
             mTrailersList.setVisibility(View.VISIBLE);
-            mLoader.initLoader(ID_TRAILER_LOADER, null, DetailActivity.this);
+            mNoReviews.setVisibility(View.GONE);
+            mReviewsList.setVisibility(View.VISIBLE);
+            mLoader.initLoader(ID_TRAILER_LOADER, mBundle, mTrailerLoader);
+            mLoader.initLoader(ID_REVIEW_LOADER, mBundle, mReviewLoader);
         } else {
             mNoTrailers.setVisibility(View.VISIBLE);
             mTrailersList.setVisibility(View.GONE);
+            mNoReviews.setVisibility(View.VISIBLE);
+            mReviewsList.setVisibility(View.GONE);
         }
     }
 
     @Override
-    public void onClick(String key) {
+    public void playTrailer(String key) {
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + key));
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("http://www.youtube.com/watch?v=" + key));
@@ -143,5 +189,11 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         } catch (ActivityNotFoundException e) {
             startActivity(webIntent);
         }
+    }
+
+    @Override
+    public void seeReview(String reviewUrl) {
+        Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(reviewUrl));
+        startActivity(webIntent);
     }
 }
