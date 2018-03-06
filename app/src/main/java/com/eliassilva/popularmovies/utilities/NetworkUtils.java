@@ -24,12 +24,21 @@ import java.util.Scanner;
  * Created by Elias on 18/02/2018.
  */
 
+/**
+ * Helper methods related to requesting and receiving movies, trailers and reviews data from themoviedb api.
+ */
 public class NetworkUtils {
     private static final String BASE_URL = "https://api.themoviedb.org/3/movie/";
     private static final String API_KEY = BuildConfig.API_KEY;
     private final static String API_KEY_PARAM = "api_key";
     private final static String TRAILER_PARAM = "/videos";
 
+    /**
+     * Build the URL to get the movies from the api
+     *
+     * @param sortByQuery string to sort the movies by popularity or top rated
+     * @return URL to get the response
+     */
     private static URL buildMoviesUrl(String sortByQuery) {
         try {
             Uri builtUri = Uri.parse(BASE_URL + sortByQuery).buildUpon()
@@ -41,6 +50,11 @@ public class NetworkUtils {
         }
     }
 
+    /**
+     * Build the URL to get the trailers from a determinate movie
+     * @param movieId from which we want to get the trailers
+     * @return URL to get the response
+     */
     private static URL buildTrailersUrl(String movieId) {
         try {
             Uri builtUri = Uri.parse(BASE_URL + movieId + TRAILER_PARAM).buildUpon()
@@ -50,9 +64,13 @@ public class NetworkUtils {
         } catch (MalformedURLException e) {
             throw new RuntimeException("Cannot create url: " + e);
         }
-
     }
 
+    /**
+     * Get the response from the api
+     * @param url from which we want to get a response
+     * @return a response from the api
+     */
     private static String getResponse(URL url) {
         HttpURLConnection urlConnection = null;
         try {
@@ -73,6 +91,11 @@ public class NetworkUtils {
         }
     }
 
+    /**
+     * Converts the response into a JSON and extract the movies data
+     * @param sortBy option choosen by the user to sort the movies
+     * @return a list of movies
+     */
     public static List<MoviePOJO> extractMoviesFromJson(String sortBy) {
         final String MOVIES_RESULTS = "results";
         final String MOVIE_ID = "id";
@@ -104,6 +127,11 @@ public class NetworkUtils {
         return moviesList;
     }
 
+    /**
+     * Converts the response into a JSON and extract the trailers data
+     * @param movieId from where the data will be extracted
+     * @return a list of trailers
+     */
     public static List<TrailerPOJO> extractTrailersFromJson(String movieId) {
         final String TRAILER_RESULTS = "results";
         final String TRAILER_KEY = "key";

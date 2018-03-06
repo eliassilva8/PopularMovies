@@ -11,6 +11,9 @@ import java.util.List;
  * Created by Elias on 21/02/2018.
  */
 
+/**
+ * Perform async load of movie data
+ */
 public class MovieLoader extends AsyncTaskLoader<List<MoviePOJO>> {
     private final String mSortBy;
 

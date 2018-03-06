@@ -10,6 +10,9 @@ import android.net.NetworkInfo;
  * Created by Elias on 01/03/2018.
  */
 
+/**
+ * Manage the internet connection
+ */
 public class NetworkReceiver extends BroadcastReceiver {
     private boolean wasTrueFlag;
     private NetworkReceiverListener networkReceiverListener;
@@ -22,6 +25,12 @@ public class NetworkReceiver extends BroadcastReceiver {
         networkReceiverListener.onConnectionChange(wasTrueFlag);
     }
 
+    /**
+     * Determines if there is a connection to the internet
+     *
+     * @param context of the activity
+     * @return true if there is a connection and false if not
+     */
     private boolean isConnected(Context context) {
         ConnectivityManager conn = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);

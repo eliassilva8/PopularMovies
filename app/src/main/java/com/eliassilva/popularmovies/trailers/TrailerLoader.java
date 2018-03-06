@@ -11,6 +11,9 @@ import java.util.List;
  * Created by Elias on 28/02/2018.
  */
 
+/**
+ * Perform async load of trailer data
+ */
 public class TrailerLoader extends AsyncTaskLoader<List<TrailerPOJO>> {
     private final String mMovieId;
 

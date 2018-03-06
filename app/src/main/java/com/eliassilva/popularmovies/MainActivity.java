@@ -30,6 +30,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Shows a list of posters from movies, according to the sort by option selected
+ */
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<MoviePOJO>>, MovieAdapter.MovieAdapterOnClickHandler, NetworkReceiver.NetworkReceiverListener {
     private MovieAdapter mMovieAdapter;
     private static final String SORT_BY_POPULARITY = "popular";
@@ -61,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mReceiver = new NetworkReceiver();
         this.registerReceiver(mReceiver, filter);
         mReceiver.setNetworkReceiverListener(this);
-
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
         mMoviesList.setLayoutManager(layoutManager);

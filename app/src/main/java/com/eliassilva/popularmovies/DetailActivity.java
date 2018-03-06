@@ -2,7 +2,6 @@ package com.eliassilva.popularmovies;
 
 import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
@@ -16,10 +15,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.eliassilva.popularmovies.movies.MoviePOJO;
 import com.eliassilva.popularmovies.trailers.TrailerAdapter;
 import com.eliassilva.popularmovies.trailers.TrailerLoader;
@@ -36,6 +33,9 @@ import butterknife.ButterKnife;
  * Created by Elias on 21/02/2018.
  */
 
+/**
+ * Shows the details of the selected movie
+ */
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<TrailerPOJO>>, TrailerAdapter.TrailerAdapterOnClickHandler, NetworkReceiver.NetworkReceiverListener {
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String POSTER_SIZE = "w185/";

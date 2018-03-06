@@ -19,6 +19,9 @@ import butterknife.ButterKnife;
  * Created by Elias on 28/02/2018.
  */
 
+/**
+ * Provides access to the trailer data
+ */
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerViewHolder> {
     private List<TrailerPOJO> mTrailersList;
     final private TrailerAdapterOnClickHandler mClickHandler;

@@ -7,6 +7,9 @@ import android.os.Parcelable;
  * Created by Elias on 17/02/2018.
  */
 
+/**
+ * Object that contains information related to a single movie
+ */
 public class MoviePOJO implements Parcelable {
     private String mMovieId;
     private String mPosterPath;
