@@ -28,6 +28,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.eliassilva.popularmovies.MainActivity" />
         </activity>
+
+        <provider
+            android:name=".data.FavoriteProvider"
+            android:authorities="com.eliassilva.popularmovies"
+            android:exported="false" />
     </application>
 
 </manifest>

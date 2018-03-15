@@ -11,14 +11,14 @@ import android.os.Parcelable;
  * Object that contains information related to a single movie
  */
 public class MoviePOJO implements Parcelable {
-    private String mMovieId;
+    private int mMovieId;
     private String mPosterPath;
     private String mTitle;
     private String mReleaseDate;
     private String mUserRating;
     private String mSynopsis;
 
-    public MoviePOJO(String movieId, String poster, String title, String releaseDate, String userRating, String synopsis) {
+    public MoviePOJO(int movieId, String poster, String title, String releaseDate, String userRating, String synopsis) {
         mMovieId = movieId;
         mPosterPath = poster;
         mTitle = title;
@@ -28,7 +28,7 @@ public class MoviePOJO implements Parcelable {
     }
 
     protected MoviePOJO(Parcel in) {
-        mMovieId = in.readString();
+        mMovieId = in.readInt();
         mPosterPath = in.readString();
         mTitle = in.readString();
         mReleaseDate = in.readString();
@@ -37,7 +37,7 @@ public class MoviePOJO implements Parcelable {
 
     }
 
-    public String getMovieId() {
+    public int getMovieId() {
         return mMovieId;
     }
 
@@ -68,7 +68,7 @@ public class MoviePOJO implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mMovieId);
+        dest.writeInt(mMovieId);
         dest.writeString(mPosterPath);
         dest.writeString(mTitle);
         dest.writeString(mReleaseDate);

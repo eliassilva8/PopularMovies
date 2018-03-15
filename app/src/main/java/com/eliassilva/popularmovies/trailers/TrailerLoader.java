@@ -15,9 +15,9 @@ import java.util.List;
  * Perform async load of trailer data
  */
 public class TrailerLoader extends AsyncTaskLoader<List<TrailerPOJO>> {
-    private final String mMovieId;
+    private final int mMovieId;
 
-    public TrailerLoader(Context context, String movieId) {
+    public TrailerLoader(Context context, int movieId) {
         super(context);
         mMovieId = movieId;
     }
@@ -29,7 +29,7 @@ public class TrailerLoader extends AsyncTaskLoader<List<TrailerPOJO>> {
 
     @Override
     public List<TrailerPOJO> loadInBackground() {
-        if (mMovieId == null) {
+        if (mMovieId == 0) {
             throw new RuntimeException("Movie ID equal to null");
         }
         return NetworkUtils.extractTrailersFromJson(mMovieId);

@@ -15,9 +15,9 @@ import java.util.List;
  * Perform async load of review data
  */
 public class ReviewLoader extends AsyncTaskLoader<List<ReviewPOJO>> {
-    private final String mMovieId;
+    private final int mMovieId;
 
-    public ReviewLoader(Context context, String movieId) {
+    public ReviewLoader(Context context, int movieId) {
         super(context);
         mMovieId = movieId;
     }
@@ -29,7 +29,7 @@ public class ReviewLoader extends AsyncTaskLoader<List<ReviewPOJO>> {
 
     @Override
     public List<ReviewPOJO> loadInBackground() {
-        if (mMovieId == null) {
+        if (mMovieId == 0) {
             throw new RuntimeException("Movie ID equal to null");
         }
         return NetworkUtils.extractReviewsFromJson(mMovieId);

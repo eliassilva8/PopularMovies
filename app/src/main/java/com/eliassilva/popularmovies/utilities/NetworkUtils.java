@@ -1,8 +1,6 @@
 package com.eliassilva.popularmovies.utilities;
 
 import android.net.Uri;
-import android.util.Log;
-
 import com.eliassilva.popularmovies.BuildConfig;
 import com.eliassilva.popularmovies.movies.MoviePOJO;
 import com.eliassilva.popularmovies.reviews.ReviewPOJO;
@@ -132,7 +130,7 @@ public class NetworkUtils {
             JSONArray moviesResultsArray = moviesJson.getJSONArray(MOVIES_RESULTS);
             for (int i = 0; i < moviesResultsArray.length(); i++) {
                 JSONObject singleMovieResult = moviesResultsArray.getJSONObject(i);
-                String movieId = singleMovieResult.getString(MOVIE_ID);
+                int movieId = singleMovieResult.getInt(MOVIE_ID);
                 String posterPath = singleMovieResult.optString(MOVIE_POSTER_PATH);
                 String title = singleMovieResult.optString(MOVIE_TITLE);
                 String releaseDate = singleMovieResult.optString(MOVIE_RELEASE_DATE);
@@ -151,14 +149,14 @@ public class NetworkUtils {
      * @param movieId from where the data will be extracted
      * @return a list of trailers
      */
-    public static List<TrailerPOJO> extractTrailersFromJson(String movieId) {
+    public static List<TrailerPOJO> extractTrailersFromJson(int movieId) {
         final String TRAILER_RESULTS = "results";
         final String TRAILER_KEY = "key";
         final String TRAILER_NAME = "name";
         List<TrailerPOJO> trailersList = new ArrayList<>();
 
         try {
-            URL url = buildTrailersUrl(movieId);
+            URL url = buildTrailersUrl(String.valueOf(movieId));
             String response = getResponse(url);
             JSONObject trailerJson = new JSONObject(response);
             JSONArray trailerResults = trailerJson.getJSONArray(TRAILER_RESULTS);
@@ -180,7 +178,7 @@ public class NetworkUtils {
      * @param movieId from where the data will be extracted
      * @return a list of reviews
      */
-    public static List<ReviewPOJO> extractReviewsFromJson(String movieId) {
+    public static List<ReviewPOJO> extractReviewsFromJson(int movieId) {
         final String REVIEWS_RESULTS = "results";
         final String REVIEW_AUTHOR = "author";
         final String REVIEW_CONTENT = "content";
@@ -188,7 +186,7 @@ public class NetworkUtils {
         List<ReviewPOJO> reviewsList = new ArrayList<>();
 
         try {
-            URL url = buildReviewsUrl(movieId);
+            URL url = buildReviewsUrl(String.valueOf(movieId));
             String response = getResponse(url);
             JSONObject reviewsJson = new JSONObject(response);
             JSONArray reviewsResults = reviewsJson.getJSONArray(REVIEWS_RESULTS);

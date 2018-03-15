@@ -2,6 +2,9 @@ package com.eliassilva.popularmovies;
 
 import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
@@ -15,8 +18,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
+import com.eliassilva.popularmovies.data.FavoritesContract;
+import com.eliassilva.popularmovies.data.FavoritesContract.FavoriteEntry;
 import com.eliassilva.popularmovies.movies.MoviePOJO;
 import com.eliassilva.popularmovies.reviews.ReviewAdapter;
 import com.eliassilva.popularmovies.reviews.ReviewLoader;
@@ -47,7 +56,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     private LoaderManager mLoader;
     private static final int ID_TRAILER_LOADER = 200;
     private static final int ID_REVIEW_LOADER = 300;
-    private String mMovieId;
+    private int mMovieId;
     private NetworkReceiver mReceiver;
     private static final String MOVIE_ID = "movie_id";
     Bundle mBundle = new Bundle();
@@ -57,7 +66,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         public Loader<List<TrailerPOJO>> onCreateLoader(int id, Bundle args) {
             switch (id) {
                 case ID_TRAILER_LOADER:
-                    return new TrailerLoader(DetailActivity.this, args.getString(MOVIE_ID));
+                    return new TrailerLoader(DetailActivity.this, args.getInt(MOVIE_ID));
                 default:
                     throw new RuntimeException("Loader Not Implemented: " + id);
             }
@@ -79,7 +88,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         public Loader<List<ReviewPOJO>> onCreateLoader(int id, Bundle args) {
             switch (id) {
                 case ID_REVIEW_LOADER:
-                    return new ReviewLoader(DetailActivity.this, args.getString(MOVIE_ID));
+                    return new ReviewLoader(DetailActivity.this, args.getInt(MOVIE_ID));
                 default:
                     throw new RuntimeException("Loader Not Implemented: " + id);
             }
@@ -114,6 +123,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     RecyclerView mReviewsList;
     @BindView(R.id.empty_reviews_tv)
     TextView mNoReviews;
+    @BindView(R.id.favoriteButton)
+    ToggleButton mFavoriteButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -121,7 +132,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
 
-        MoviePOJO movieData = (MoviePOJO) getIntent().getParcelableExtra("movie_data");
+        final MoviePOJO movieData = (MoviePOJO) getIntent().getParcelableExtra("movie_data");
         assert movieData != null;
         Picasso.with(this).load(POSTER_BASE_URL + POSTER_SIZE + movieData.getPosterPath()).into(mPosterPath);
         mTitle.setText(movieData.getTitle());
@@ -151,7 +162,27 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         mReviewAdapter = new ReviewAdapter(this);
         mReviewsList.setAdapter(mReviewAdapter);
 
-        mBundle.putString(MOVIE_ID, mMovieId);
+        mBundle.putInt(MOVIE_ID, mMovieId);
+
+        mFavoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                ContentResolver contentResolver = getContentResolver();
+                if (isChecked) {
+                    ContentValues values = new ContentValues();
+                    values.put(FavoriteEntry.COLUMN_ID, movieData.getMovieId());
+                    values.put(FavoriteEntry.COLUMN_NAME, movieData.getTitle());
+                    values.put(FavoriteEntry.COLUMN_RELEASE_DATE, movieData.getReleaseDate());
+                    values.put(FavoriteEntry.COLUMN_RATING, movieData.getUserRating());
+                    values.put(FavoriteEntry.COLUMN_SYNOPSIS, movieData.getSynopsis());
+                    values.put(FavoriteEntry.COLUMN_POSTER, movieData.getPosterPath());
+                    contentResolver.insert(FavoriteEntry.CONTENT_URI, values);
+                } else {
+                    Uri uri = ContentUris.withAppendedId(FavoriteEntry.CONTENT_URI, movieData.getMovieId());
+                    contentResolver.delete(uri, null, null);
+                }
+            }
+        });
     }
 
     @Override
