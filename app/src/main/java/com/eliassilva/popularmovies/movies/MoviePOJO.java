@@ -17,14 +17,16 @@ public class MoviePOJO implements Parcelable {
     private String mReleaseDate;
     private String mUserRating;
     private String mSynopsis;
+    private Boolean mIsFavorite;
 
-    public MoviePOJO(int movieId, String poster, String title, String releaseDate, String userRating, String synopsis) {
+    public MoviePOJO(int movieId, String poster, String title, String releaseDate, String userRating, String synopsis, Boolean isFavorite) {
         mMovieId = movieId;
         mPosterPath = poster;
         mTitle = title;
         mSynopsis = synopsis;
         mReleaseDate = releaseDate;
         mUserRating = userRating;
+        mIsFavorite = isFavorite;
     }
 
     protected MoviePOJO(Parcel in) {
@@ -34,7 +36,7 @@ public class MoviePOJO implements Parcelable {
         mReleaseDate = in.readString();
         mUserRating = in.readString();
         mSynopsis = in.readString();
-
+        mIsFavorite = in.readByte() != 0;
     }
 
     public int getMovieId() {
@@ -61,6 +63,14 @@ public class MoviePOJO implements Parcelable {
         return mSynopsis;
     }
 
+    public Boolean getIsFavorite() {
+        return mIsFavorite;
+    }
+
+    public void setIsFavorite(Boolean mIsFavorite) {
+        this.mIsFavorite = mIsFavorite;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -74,6 +84,7 @@ public class MoviePOJO implements Parcelable {
         dest.writeString(mReleaseDate);
         dest.writeString(mUserRating);
         dest.writeString(mSynopsis);
+        dest.writeByte((byte) (mIsFavorite ? 1 : 0));
     }
 
     public static final Parcelable.Creator<MoviePOJO> CREATOR = new Parcelable.Creator<MoviePOJO>() {

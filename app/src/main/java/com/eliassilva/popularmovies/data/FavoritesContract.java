@@ -30,5 +30,18 @@ public class FavoritesContract {
         public static final String COLUMN_SYNOPSIS = "synopsis";
         public static final String COLUMN_IS_FAVORITE = "is_favorite";
 
+        /**
+         * Builds a URI that adds the movie id to the end of the favorites content URI path.
+         *
+         * @param movieId
+         * @return Uri to query details about a single movie entry
+         */
+        public static Uri buildMovieUri(int movieId) {
+            return CONTENT_URI.buildUpon()
+                    .appendPath(Long.toString(movieId))
+                    .build();
+        }
     }
+
+
 }

@@ -140,6 +140,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         mUserRating.setText(movieData.getUserRating());
         mSynopsis.setText(movieData.getSynopsis());
         mMovieId = movieData.getMovieId();
+        if (movieData.getIsFavorite()) {
+            mFavoriteButton.setChecked(true);
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mSynopsis.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
         }
@@ -177,9 +180,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                     values.put(FavoriteEntry.COLUMN_SYNOPSIS, movieData.getSynopsis());
                     values.put(FavoriteEntry.COLUMN_POSTER, movieData.getPosterPath());
                     contentResolver.insert(FavoriteEntry.CONTENT_URI, values);
+                    Toast.makeText(DetailActivity.this, "Movie inserted", Toast.LENGTH_SHORT).show();
                 } else {
-                    Uri uri = ContentUris.withAppendedId(FavoriteEntry.CONTENT_URI, movieData.getMovieId());
+                    Uri uri = FavoriteEntry.buildMovieUri(movieData.getMovieId());
                     contentResolver.delete(uri, null, null);
+                    Toast.makeText(DetailActivity.this, "Movie removed", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -2,17 +2,15 @@ package com.eliassilva.popularmovies;
 
 import android.app.Activity;
 import android.app.LoaderManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,6 +18,8 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.eliassilva.popularmovies.data.FavoriteLoader;
+import com.eliassilva.popularmovies.data.FavoritesContract;
 import com.eliassilva.popularmovies.movies.MovieAdapter;
 import com.eliassilva.popularmovies.movies.MovieLoader;
 import com.eliassilva.popularmovies.movies.MoviePOJO;
@@ -37,8 +37,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private MovieAdapter mMovieAdapter;
     private static final String SORT_BY_POPULARITY = "popular";
     private static final String SORT_BY_HIGHEST_RATED = "top_rated";
+    private static final String SORT_BY_FAVORITES = "favorites";
     private String mSortBySelected = SORT_BY_POPULARITY;
     private static final int ID_MOVIE_LOADER = 100;
+    private static final int ID_FAVORITES_LOADER = 101;
     private LoaderManager mLoaderManager;
     private NetworkReceiver mReceiver;
 
@@ -77,6 +79,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mSpinner.setAdapter(spinnerAdapter);
     }
 
+    /*@Override
+    protected void onResume() {
+        super.onResume();
+        getSupportLoaderManager().restartLoader(ID_FAVORITES_LOADER, null, (android.support.v4.app.LoaderManager.LoaderCallbacks<Object>) this);
+    }
+*/
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -91,6 +99,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             case ID_MOVIE_LOADER:
                 mLoadingIndicator.setVisibility(View.VISIBLE);
                 return new MovieLoader(this, mSortBySelected);
+            case ID_FAVORITES_LOADER:
+                mLoadingIndicator.setVisibility(View.VISIBLE);
+                return new FavoriteLoader(this, FavoritesContract.FavoriteEntry.CONTENT_URI);
             default:
                 throw new RuntimeException("Loader Not Implemented: " + loaderId);
         }
@@ -115,8 +126,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onClick(MoviePOJO movie) {
-        MoviePOJO dataToSend = new MoviePOJO(movie.getMovieId(), movie.getPosterPath(), movie.getTitle(), movie.getReleaseDate(), movie.getUserRating(), movie.getSynopsis());
+        MoviePOJO dataToSend = new MoviePOJO(movie.getMovieId(), movie.getPosterPath(), movie.getTitle(), movie.getReleaseDate(), movie.getUserRating(), movie.getSynopsis(), movie.getIsFavorite());
         Intent movieDetailIntent = new Intent(MainActivity.this, DetailActivity.class);
+        Uri movieUri = FavoritesContract.FavoriteEntry.buildMovieUri(movie.getMovieId());
+        Cursor cursor = getContentResolver().query(movieUri, null, null, null, null);
+        if (cursor.getCount() > 0) {
+            dataToSend.setIsFavorite(true);
+        }
         movieDetailIntent.putExtra("movie_data", dataToSend);
         startActivity(movieDetailIntent);
     }
@@ -134,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mSortByLabel.setVisibility(View.GONE);
             mEmpty_view_tv.setVisibility(View.VISIBLE);
             mEmpty_view_tv.setText(R.string.no_connection);
+            mLoaderManager.initLoader(ID_FAVORITES_LOADER, null, MainActivity.this);
         }
     }
 
@@ -147,8 +164,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 case 1:
                     mSortBySelected = SORT_BY_HIGHEST_RATED;
                     break;
+                case 2:
+                    mSortBySelected = SORT_BY_FAVORITES;
+                    break;
             }
-            mLoaderManager.restartLoader(ID_MOVIE_LOADER, null, MainActivity.this);
+            if (mSortBySelected.equals(SORT_BY_FAVORITES)) {
+                mLoaderManager.restartLoader(ID_FAVORITES_LOADER, null, MainActivity.this);
+            } else {
+                mLoaderManager.restartLoader(ID_MOVIE_LOADER, null, MainActivity.this);
+            }
         }
 
         @Override

@@ -28,7 +28,7 @@ public class FavoriteProvider extends ContentProvider {
 
     static {
         sUriMatcher.addURI(FavoritesContract.CONTENT_AUTHORITY, FavoritesContract.PATH_FAVORITES, MOVIES);
-        sUriMatcher.addURI(FavoritesContract.CONTENT_AUTHORITY, FavoritesContract.PATH_FAVORITES + "#", MOVIE_ID);
+        sUriMatcher.addURI(FavoritesContract.CONTENT_AUTHORITY, FavoritesContract.PATH_FAVORITES + "/#", MOVIE_ID);
     }
 
     public static final String LOG_TAG = FavoriteProvider.class.getSimpleName();
@@ -99,19 +99,20 @@ public class FavoriteProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
-        return rowsDeleted = database.delete(FavoriteEntry.TABLE_NAME, selection, selectionArgs);
-
-        /*final int match = sUriMatcher.match(uri);
+        final int match = sUriMatcher.match(uri);
         switch (match) {
             case MOVIES:
                 rowsDeleted = database.delete(FavoriteEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             case MOVIE_ID:
-                //selection = FavoriteEntry.COLUMN_ID + "=?";
-                //selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                selection = FavoriteEntry.COLUMN_ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 rowsDeleted = database.delete(FavoriteEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
-        }*/
+        }
+        return rowsDeleted;
     }
 
     @Override

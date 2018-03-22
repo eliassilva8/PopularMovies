@@ -1,7 +1,12 @@
 package com.eliassilva.popularmovies.utilities;
 
+import android.content.Context;
+import android.content.Loader;
+import android.database.Cursor;
 import android.net.Uri;
 import com.eliassilva.popularmovies.BuildConfig;
+import com.eliassilva.popularmovies.data.FavoritesContract;
+import com.eliassilva.popularmovies.data.FavoritesContract.FavoriteEntry;
 import com.eliassilva.popularmovies.movies.MoviePOJO;
 import com.eliassilva.popularmovies.reviews.ReviewPOJO;
 import com.eliassilva.popularmovies.trailers.TrailerPOJO;
@@ -136,7 +141,7 @@ public class NetworkUtils {
                 String releaseDate = singleMovieResult.optString(MOVIE_RELEASE_DATE);
                 String userRating = Double.toString(singleMovieResult.optDouble(MOVIE_USER_RATING));
                 String synopsis = singleMovieResult.getString(MOVIE_SYNOPSIS);
-                moviesList.add(new MoviePOJO(movieId, posterPath, title, releaseDate, userRating, synopsis));
+                moviesList.add(new MoviePOJO(movieId, posterPath, title, releaseDate, userRating, synopsis, false));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -201,5 +206,22 @@ public class NetworkUtils {
             e.printStackTrace();
         }
         return reviewsList;
+    }
+
+    /**
+     * Retrieves all databse entries
+     *
+     * @param context
+     * @param uri
+     * @return a list of all movies in database
+     */
+    public static List<MoviePOJO> getMoviesFromDatabase(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        List<MoviePOJO> movies = new ArrayList<>();
+        String name = cursor.getColumnName(cursor.getColumnIndex(FavoriteEntry.COLUMN_NAME));
+        String release = cursor.getColumnName(cursor.getColumnIndex(FavoriteEntry.COLUMN_RELEASE_DATE));
+
+        movies.add(new MoviePOJO(0, null, name, release, null, null, true));
+        return movies;
     }
 }
