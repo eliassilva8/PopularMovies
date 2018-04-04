@@ -15,7 +15,7 @@ import com.eliassilva.popularmovies.data.FavoritesContract.FavoriteEntry;
  */
 public class FavoritesDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "favorites.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 6;
 
     FavoritesDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,11 +27,11 @@ public class FavoritesDbHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + FavoriteEntry.TABLE_NAME + " (" +
                         FavoriteEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         FavoriteEntry.COLUMN_NAME + " TEXT NOT NULL, " +
-                        FavoriteEntry.COLUMN_POSTER + " BLOB, " +
+                        FavoriteEntry.COLUMN_POSTER_PATH + " TEXT, " +
                         FavoriteEntry.COLUMN_RATING + " TEXT, " +
                         FavoriteEntry.COLUMN_RELEASE_DATE + " TEXT, " +
                         FavoriteEntry.COLUMN_SYNOPSIS + " TEXT, " +
-                        FavoriteEntry.COLUMN_IS_FAVORITE + " INTEGER NOT NULL DEFAULT 0, " +
+                        FavoriteEntry.COLUMN_IS_FAVORITE + " INTEGER NOT NULL DEFAULT 1, " +
                         " UNIQUE (" + FavoriteEntry.COLUMN_ID + ") ON CONFLICT REPLACE);";
         db.execSQL(SQL_CREATE_FAVORITE_TABLE);
     }

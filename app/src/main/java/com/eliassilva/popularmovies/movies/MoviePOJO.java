@@ -1,5 +1,6 @@
 package com.eliassilva.popularmovies.movies;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -45,6 +46,10 @@ public class MoviePOJO implements Parcelable {
 
     public String getPosterPath() {
         return mPosterPath;
+    }
+
+    public void setPosterPath(String mPosterPath) {
+        this.mPosterPath = mPosterPath;
     }
 
     public String getTitle() {

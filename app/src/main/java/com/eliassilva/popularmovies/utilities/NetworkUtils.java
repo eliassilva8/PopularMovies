@@ -1,11 +1,11 @@
 package com.eliassilva.popularmovies.utilities;
 
 import android.content.Context;
-import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import com.eliassilva.popularmovies.BuildConfig;
-import com.eliassilva.popularmovies.data.FavoritesContract;
 import com.eliassilva.popularmovies.data.FavoritesContract.FavoriteEntry;
 import com.eliassilva.popularmovies.movies.MoviePOJO;
 import com.eliassilva.popularmovies.reviews.ReviewPOJO;
@@ -218,10 +218,26 @@ public class NetworkUtils {
     public static List<MoviePOJO> getMoviesFromDatabase(Context context, Uri uri) {
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         List<MoviePOJO> movies = new ArrayList<>();
-        String name = cursor.getColumnName(cursor.getColumnIndex(FavoriteEntry.COLUMN_NAME));
-        String release = cursor.getColumnName(cursor.getColumnIndex(FavoriteEntry.COLUMN_RELEASE_DATE));
-
-        movies.add(new MoviePOJO(0, null, name, release, null, null, true));
+        while (cursor.moveToNext()) {
+            int movieId = cursor.getInt(cursor.getColumnIndex(FavoriteEntry.COLUMN_ID));
+            String posterPath = cursor.getString(cursor.getColumnIndex(FavoriteEntry.COLUMN_POSTER_PATH));
+            String title = cursor.getString(cursor.getColumnIndex(FavoriteEntry.COLUMN_NAME));
+            String releaseDate = cursor.getString(cursor.getColumnIndex(FavoriteEntry.COLUMN_RELEASE_DATE));
+            String userRating = cursor.getString(cursor.getColumnIndex(FavoriteEntry.COLUMN_RATING));
+            String synopsis = cursor.getString(cursor.getColumnIndex(FavoriteEntry.COLUMN_SYNOPSIS));
+            movies.add(new MoviePOJO(movieId, posterPath, title, releaseDate, userRating, synopsis, true));
+        }
+        cursor.close();
         return movies;
+    }
+
+    /**
+     * Convert an array of bytes to image
+     *
+     * @param image in bytes
+     * @return bitmap
+     */
+    private static Bitmap toBitmap(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 }

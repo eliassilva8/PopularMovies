@@ -2,6 +2,8 @@ package com.eliassilva.popularmovies.reviews;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +51,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         TextView reviewContent = holder.mReviewContent;
         String currentReviewAuthor = mReviewsList.get(position).getReviewAuthor();
         String currentReviewContent = mReviewsList.get(position).getReviewContent();
-        reviewAuthor.setText(currentReviewAuthor);
+        SpannableString underlineAuthor = new SpannableString(currentReviewAuthor);
+        underlineAuthor.setSpan(new UnderlineSpan(), 0, underlineAuthor.length(), 0);
+        reviewAuthor.setText(underlineAuthor);
         reviewContent.setText(currentReviewContent);
     }
 

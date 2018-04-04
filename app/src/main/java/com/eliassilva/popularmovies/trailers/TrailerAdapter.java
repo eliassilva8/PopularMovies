@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eliassilva.popularmovies.R;
@@ -68,7 +69,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
         @BindView(R.id.trailer_name_tv)
         TextView mTrailerName;
         @BindView(R.id.play_video_bt)
-        Button mPlayTrailer;
+        ImageView mPlayTrailer;
 
         public TrailerViewHolder(View itemView) {
             super(itemView);

@@ -5,25 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <Button
+    <ImageView
         android:id="@+id/play_video_bt"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Button"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_margin"
+        android:background="@mipmap/ic_play_arrow_black_24dp"
+        android:minHeight="30dp"
+        android:minWidth="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/trailer_name_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/trailer_name_tv"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:textSize="20sp"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:layout_marginStart="@dimen/default_margin"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/play_video_bt"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/play_video_bt"
         app:layout_constraintTop_toTopOf="@+id/play_video_bt"
         tools:text="Trailer 1" />

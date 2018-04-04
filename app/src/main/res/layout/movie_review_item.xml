@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/review_author_tv"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
@@ -17,7 +17,7 @@
         android:maxLines="1"
         android:scrollHorizontally="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/review_content_tv"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Elias Silvadfsgsgsgsgsdgdsgdsgsg" />
@@ -30,11 +30,18 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:maxLines="3"
         android:ellipsize="end"
+        android:maxLines="3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/review_author_tv"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eu enim auctor, molestie urna nec, aliquam sem. Ut iaculis facilisis augue et malesuada. In hac habitasse platea dictumst. Duis nec fermentum massa, at tristique urna. Nunc ut egestas ipsum, vitae vulputate dolor. Donec a enim vitae mauris vehicula vestibulum. Vivamus est ligula, maximus condimentum nulla eget, congue maximus libero. Mauris id nibh eu urna dignissim egestas vel eget lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nullam consequat auctor massa a posuere. Nulla imperdiet consectetur ex. In congue, nulla ac viverra viverra, massa sem." />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="108dp" />
 </android.support.constraint.ConstraintLayout>

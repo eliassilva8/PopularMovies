@@ -24,7 +24,7 @@ public class FavoritesContract {
         public static final String TABLE_NAME = PATH_FAVORITES;
         public static final String COLUMN_ID = "id";
         public static final String COLUMN_NAME = "name";
-        public static final String COLUMN_POSTER = "poster";
+        public static final String COLUMN_POSTER_PATH = "poster_path";
         public static final String COLUMN_RELEASE_DATE = "release";
         public static final String COLUMN_RATING = "rating";
         public static final String COLUMN_SYNOPSIS = "synopsis";

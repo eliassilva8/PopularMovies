@@ -3,11 +3,12 @@ package com.eliassilva.popularmovies;
 import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
@@ -23,8 +24,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
-import com.eliassilva.popularmovies.data.FavoritesContract;
 import com.eliassilva.popularmovies.data.FavoritesContract.FavoriteEntry;
 import com.eliassilva.popularmovies.movies.MoviePOJO;
 import com.eliassilva.popularmovies.reviews.ReviewAdapter;
@@ -36,6 +35,10 @@ import com.eliassilva.popularmovies.trailers.TrailerPOJO;
 import com.eliassilva.popularmovies.utilities.NetworkReceiver;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
@@ -106,7 +109,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     };
 
     @BindView(R.id.movie_poster_detail_iv)
-    ImageView mPosterPath;
+    ImageView mPoster;
     @BindView(R.id.movie_title_tv)
     TextView mTitle;
     @BindView(R.id.movie_release_date_tv)
@@ -134,7 +137,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
 
         final MoviePOJO movieData = (MoviePOJO) getIntent().getParcelableExtra("movie_data");
         assert movieData != null;
-        Picasso.with(this).load(POSTER_BASE_URL + POSTER_SIZE + movieData.getPosterPath()).into(mPosterPath);
         mTitle.setText(movieData.getTitle());
         mReleaseDate.setText(movieData.getReleaseDate());
         mUserRating.setText(movieData.getUserRating());
@@ -142,6 +144,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         mMovieId = movieData.getMovieId();
         if (movieData.getIsFavorite()) {
             mFavoriteButton.setChecked(true);
+            Picasso.with(this).load(new File(this.getFilesDir().getAbsolutePath() + movieData.getPosterPath())).into(mPoster);
+        } else {
+            Picasso.with(this).load(POSTER_BASE_URL + POSTER_SIZE + movieData.getPosterPath()).into(mPoster);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mSynopsis.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
@@ -178,12 +183,13 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                     values.put(FavoriteEntry.COLUMN_RELEASE_DATE, movieData.getReleaseDate());
                     values.put(FavoriteEntry.COLUMN_RATING, movieData.getUserRating());
                     values.put(FavoriteEntry.COLUMN_SYNOPSIS, movieData.getSynopsis());
-                    values.put(FavoriteEntry.COLUMN_POSTER, movieData.getPosterPath());
+                    values.put(FavoriteEntry.COLUMN_POSTER_PATH, saveImage(movieData.getPosterPath()));
                     contentResolver.insert(FavoriteEntry.CONTENT_URI, values);
                     Toast.makeText(DetailActivity.this, "Movie inserted", Toast.LENGTH_SHORT).show();
                 } else {
                     Uri uri = FavoriteEntry.buildMovieUri(movieData.getMovieId());
                     contentResolver.delete(uri, null, null);
+                    DetailActivity.this.deleteFile(movieData.getPosterPath().replace("/", ""));
                     Toast.makeText(DetailActivity.this, "Movie removed", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -231,5 +237,28 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     public void seeReview(String reviewUrl) {
         Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(reviewUrl));
         startActivity(webIntent);
+    }
+
+    /**
+     * Save an image into the app directory
+     *
+     * @param imageName
+     */
+    private String saveImage(String imageName) {
+        mPoster.setDrawingCacheEnabled(true);
+        mPoster.buildDrawingCache(true);
+        imageName = imageName.replace("/", "");
+        try {
+            Bitmap image = Bitmap.createBitmap(mPoster.getDrawingCache());
+            FileOutputStream fileOutputStream = openFileOutput(imageName, Context.MODE_PRIVATE);
+            image.compress(Bitmap.CompressFormat.PNG, 0, fileOutputStream);
+            fileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        File file = new File(imageName);
+        return file.getAbsolutePath();
     }
 }

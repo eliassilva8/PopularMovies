@@ -38,11 +38,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String SORT_BY_POPULARITY = "popular";
     private static final String SORT_BY_HIGHEST_RATED = "top_rated";
     private static final String SORT_BY_FAVORITES = "favorites";
-    private String mSortBySelected = SORT_BY_POPULARITY;
+    private String mSortBySelected;
     private static final int ID_MOVIE_LOADER = 100;
     private static final int ID_FAVORITES_LOADER = 101;
     private LoaderManager mLoaderManager;
     private NetworkReceiver mReceiver;
+    private static final String MOVIE_LIST_STATE_KEY = "movies";
+    GridLayoutManager mLayoutManager;
 
     @BindView(R.id.movies_list_rv)
     RecyclerView mMoviesList;
@@ -67,30 +69,30 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         this.registerReceiver(mReceiver, filter);
         mReceiver.setNetworkReceiverListener(this);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
-        mMoviesList.setLayoutManager(layoutManager);
+        mLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
+        mMoviesList.setLayoutManager(mLayoutManager);
         mMoviesList.setHasFixedSize(true);
-
         mMovieAdapter = new MovieAdapter(this);
         mMoviesList.setAdapter(mMovieAdapter);
+        mMoviesList.scrollToPosition(20);
 
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sort_by_array, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(spinnerAdapter);
     }
 
-    /*@Override
-    protected void onResume() {
-        super.onResume();
-        getSupportLoaderManager().restartLoader(ID_FAVORITES_LOADER, null, (android.support.v4.app.LoaderManager.LoaderCallbacks<Object>) this);
-    }
-*/
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (mReceiver != null) {
             this.unregisterReceiver(mReceiver);
         }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
     }
 
     @Override
@@ -131,7 +133,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Uri movieUri = FavoritesContract.FavoriteEntry.buildMovieUri(movie.getMovieId());
         Cursor cursor = getContentResolver().query(movieUri, null, null, null, null);
         if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
             dataToSend.setIsFavorite(true);
+            dataToSend.setPosterPath(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoriteEntry.COLUMN_POSTER_PATH)));
+            cursor.close();
         }
         movieDetailIntent.putExtra("movie_data", dataToSend);
         startActivity(movieDetailIntent);
