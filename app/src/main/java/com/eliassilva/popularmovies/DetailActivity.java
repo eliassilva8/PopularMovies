@@ -1,19 +1,20 @@
 package com.eliassilva.popularmovies;
 
-import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import android.text.Layout;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -63,6 +65,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     private NetworkReceiver mReceiver;
     private static final String MOVIE_ID = "movie_id";
     Bundle mBundle = new Bundle();
+    private static final String TRAILER_LIST_STATE_KEY = "trailer_state";
+    private static final String REVIEW_LIST_STATE_KEY = "review_state";
+    LinearLayoutManager mTrailerLayoutManager;
+    LinearLayoutManager mReviewLayoutManager;
+    private Parcelable mTrailerLayoutManagerSavedState;
+    private Parcelable mReviewLayoutManagerSavedState;
 
     private LoaderManager.LoaderCallbacks<List<TrailerPOJO>> mTrailerLoader = new LoaderManager.LoaderCallbacks<List<TrailerPOJO>>() {
         @Override
@@ -78,6 +86,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         @Override
         public void onLoadFinished(Loader<List<TrailerPOJO>> loader, List<TrailerPOJO> data) {
             mTrailerAdapter.setTrailerData(data);
+            if (mTrailerLayoutManagerSavedState != null) {
+                mTrailerLayoutManager.onRestoreInstanceState(mTrailerLayoutManagerSavedState);
+            }
         }
 
         @Override
@@ -100,6 +111,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         @Override
         public void onLoadFinished(Loader<List<ReviewPOJO>> loader, List<ReviewPOJO> data) {
             mReviewAdapter.setReviewData(data);
+            if (mReviewLayoutManagerSavedState != null) {
+                mReviewLayoutManager.onRestoreInstanceState(mReviewLayoutManagerSavedState);
+            }
         }
 
         @Override
@@ -152,20 +166,20 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             mSynopsis.setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD);
         }
 
-        mLoader = getLoaderManager();
+        mLoader = getSupportLoaderManager();
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         mReceiver = new NetworkReceiver();
         this.registerReceiver(mReceiver, filter);
         mReceiver.setNetworkReceiverListener(this);
 
-        LinearLayoutManager trailerLayoutManager = new LinearLayoutManager(this);
-        mTrailersList.setLayoutManager(trailerLayoutManager);
+        mTrailerLayoutManager = new LinearLayoutManager(this);
+        mTrailersList.setLayoutManager(mTrailerLayoutManager);
         mTrailersList.setHasFixedSize(true);
         mTrailerAdapter = new TrailerAdapter(this);
         mTrailersList.setAdapter(mTrailerAdapter);
 
-        LinearLayoutManager reviewLayoutManager = new LinearLayoutManager(this);
-        mReviewsList.setLayoutManager(reviewLayoutManager);
+        mReviewLayoutManager = new LinearLayoutManager(this);
+        mReviewsList.setLayoutManager(mReviewLayoutManager);
         mReviewsList.setHasFixedSize(true);
         mReviewAdapter = new ReviewAdapter(this);
         mReviewsList.setAdapter(mReviewAdapter);
@@ -194,6 +208,10 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                 }
             }
         });
+        if (savedInstanceState != null) {
+            mTrailerLayoutManagerSavedState = savedInstanceState.getParcelable(TRAILER_LIST_STATE_KEY);
+            mReviewLayoutManagerSavedState = savedInstanceState.getParcelable(REVIEW_LIST_STATE_KEY);
+        }
     }
 
     @Override
@@ -202,6 +220,13 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         if (mReceiver != null) {
             this.unregisterReceiver(mReceiver);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(TRAILER_LIST_STATE_KEY, mTrailerLayoutManager.onSaveInstanceState());
+        outState.putParcelable(REVIEW_LIST_STATE_KEY, mTrailerLayoutManager.onSaveInstanceState());
     }
 
     @Override

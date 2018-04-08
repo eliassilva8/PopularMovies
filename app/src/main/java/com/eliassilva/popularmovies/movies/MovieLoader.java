@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Perform async load of movie data
  */
-public class MovieLoader extends AsyncTaskLoader<List<MoviePOJO>> {
+public class MovieLoader extends android.support.v4.content.AsyncTaskLoader<List<MoviePOJO>> {
     private final String mSortBy;
 
     public MovieLoader(Context context, String sortBy) {

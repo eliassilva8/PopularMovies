@@ -14,7 +14,7 @@ import java.util.List;
  * Created by Elias on 15/03/2018.
  */
 
-public class FavoriteLoader extends AsyncTaskLoader<List<MoviePOJO>> {
+public class FavoriteLoader extends android.support.v4.content.AsyncTaskLoader<List<MoviePOJO>> {
     private final Uri mUri;
 
     public FavoriteLoader(Context context, Uri uri) {

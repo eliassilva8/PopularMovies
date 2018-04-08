@@ -1,13 +1,15 @@
 package com.eliassilva.popularmovies;
 
 import android.app.Activity;
-import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,8 +45,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int ID_FAVORITES_LOADER = 101;
     private LoaderManager mLoaderManager;
     private NetworkReceiver mReceiver;
-    private static final String MOVIE_LIST_STATE_KEY = "movies";
+    private static final String MOVIE_LIST_STATE_KEY = "view_state";
     GridLayoutManager mLayoutManager;
+    private Parcelable mLayoutManagerSavedState;
 
     @BindView(R.id.movies_list_rv)
     RecyclerView mMoviesList;
@@ -57,13 +60,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindView(R.id.sort_by_spinner_label)
     TextView mSortByLabel;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mLoaderManager = getLoaderManager();
+        mLoaderManager = getSupportLoaderManager();
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         mReceiver = new NetworkReceiver();
         this.registerReceiver(mReceiver, filter);
@@ -74,11 +78,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mMoviesList.setHasFixedSize(true);
         mMovieAdapter = new MovieAdapter(this);
         mMoviesList.setAdapter(mMovieAdapter);
-        mMoviesList.scrollToPosition(20);
 
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sort_by_array, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(spinnerAdapter);
+
+        if (savedInstanceState != null) {
+            mLayoutManagerSavedState = savedInstanceState.getParcelable(MOVIE_LIST_STATE_KEY);
+        }
     }
 
     @Override
@@ -90,13 +97,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(MOVIE_LIST_STATE_KEY, mLayoutManager.onSaveInstanceState());
     }
 
     @Override
-    public android.content.Loader<List<MoviePOJO>> onCreateLoader(int loaderId, Bundle args) {
+    public Loader<List<MoviePOJO>> onCreateLoader(int loaderId, Bundle args) {
         switch (loaderId) {
             case ID_MOVIE_LOADER:
                 mLoadingIndicator.setVisibility(View.VISIBLE);
@@ -110,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    public void onLoadFinished(android.content.Loader<List<MoviePOJO>> loader, List<MoviePOJO> data) {
+    public void onLoadFinished(Loader<List<MoviePOJO>> loader, List<MoviePOJO> data) {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
         mMoviesList.setVisibility(View.VISIBLE);
         mSpinner.setVisibility(View.VISIBLE);
@@ -119,10 +126,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mEmpty_view_tv.setText(R.string.no_movies);
         }
         mMovieAdapter.setMovieData(data);
+        if (mLayoutManagerSavedState != null) {
+            mLayoutManager.onRestoreInstanceState(mLayoutManagerSavedState);
+        }
     }
 
     @Override
-    public void onLoaderReset(android.content.Loader<List<MoviePOJO>> loader) {
+    public void onLoaderReset(Loader<List<MoviePOJO>> loader) {
         mMovieAdapter.setMovieData(null);
     }
 

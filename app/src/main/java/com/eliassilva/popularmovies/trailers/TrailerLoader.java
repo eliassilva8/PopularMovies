@@ -1,7 +1,7 @@
 package com.eliassilva.popularmovies.trailers;
 
-import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.support.v4.content.AsyncTaskLoader;
 
 import com.eliassilva.popularmovies.utilities.NetworkUtils;
 
